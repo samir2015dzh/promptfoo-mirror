@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  workflows: write
 
 jobs:
   sync:
@@ -16,7 +17,8 @@ jobs:
         env:
           # Push with the workflow's own GITHUB_TOKEN, not SYNC_TOKEN: a user PAT without the
           # `workflow` scope is refused on every ref whose tree creates/updates .github/workflows/*
-          # (promptfoo: all 1,559 refs). GITHUB_TOKEN (contents: write above) is not subject to that rule.
+          # (promptfoo: all 1,559 refs). GITHUB_TOKEN is an App token: it passes only with `workflows: write`
+          # declared above (run 3: without it, all 1,559 refs were refused for the App as well).
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
