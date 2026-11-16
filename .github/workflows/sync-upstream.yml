@@ -14,7 +14,10 @@ jobs:
     steps:
       - name: Mirror upstream branches and tags
         env:
-          GH_TOKEN: ${{ secrets.SYNC_TOKEN }}
+          # Push with the workflow's own GITHUB_TOKEN, not SYNC_TOKEN: a user PAT without the
+          # `workflow` scope is refused on every ref whose tree creates/updates .github/workflows/*
+          # (promptfoo: all 1,559 refs). GITHUB_TOKEN (contents: write above) is not subject to that rule.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
           git clone --bare https://github.com/promptfoo/promptfoo.git upstream.git
